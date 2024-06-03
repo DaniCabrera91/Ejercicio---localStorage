@@ -1,40 +1,99 @@
-const inputName = document.getElementById('userName')
-const inputMail = document.getElementById('userMail')
-const inputMessage = document.getElementById('userMsg')
-const userData = document.getElementById('content')
-
-const sendButton = document.getElementById('sendButton')
+const inputName = document.getElementById("name");
+const inputMail = document.getElementById("mail");
+const inputMsg = document.getElementById("message");
+const userData = document.getElementById("userList");
 
 
-
-function onSubmit(event){
-    event.preventDefault()
-    saveDataStorage()
-    const userDataStorage = JSON.parse(localStorage.getItem('userData'))
-    userData.innerHTML= `<p>Hola ${userDataStorage.userName} tu email es: ${userDataStorage.userMail} y tu mensaje es: ${userDataStorage.userMsg}`
-    console.log(userDataStorage)
+if (!localStorage.userData) {
+  localStorage.setItem("userData", JSON.stringify([]));
+} else {
+  let users = JSON.parse(localStorage.userList);
+  users.forEach((element) => {
+    addUserToDOM(element);
+  });
 }
 
+// Boton de submit
+document.getElementById("sendButton").addEventListener("click", addUserToLocal);
+
+function addUserToLocal(event) {
+  event.preventDefault();
+  // Check all inputs
+  if (!userName.value || !userMail.value || !userMessage.value) {
+    errorMessage.innerHTML = "Falta un valor!";
+    return;
+  }
+
+  errorMessage.innerHTML = "";
+
+  let user = {
+    userName: userName.value,
+    userMail: userMail.value,
+    userMessage: userMessage.value,
+  };
+
+  let users = JSON.parse(localStorage.userList);
+  users.push(user);
+  localStorage.userList = JSON.stringify(users);
+  addUserToDOM(user);
+
+  userName.value = "";
+  userMail.value = "";
+  userMessage.value = "";
+}
+
+function addUserToDOM(user) {
+  let card = document.createElement("div");
+  card.classList.add("user-card");
+
+  card.innerHTML =
+    `<p>Nombre: ${user.userName}</p>` +
+    `<p>Correo: ${user.userMail}</p>` +
+    `<p>Mensaje: ${user.userMsg}</p>`;
+
+  userList.appendChild(card);
+}
+
+document.getElementById("deleteButton").addEventListener("click", emptyUserList);
+
+function emptyUserList(event) {
+  event.preventDefault();
+  localStorage.setItem("userList", JSON.stringify([]));
+  userList.innerHTML = "";
+}
+
+
+
+
+
+
+
 // Un solo usuario:
-function saveDataStorage(){
-    localStorage.setItem(
-        'userData', 
-        JSON.stringify({
-            userName: userName.value,
-            userMail: userMail.value,
-            userMsg: userMsg.value,
-        })
-    )
-   }  
+// function saveDataStorage(){
+//     localStorage.setItem(
+//         'userData', 
+//         JSON.stringify({
+//             userName: userName.value,
+//             userMail: userMail.value,
+//             userMsg: userMsg.value,
+//         })
+//     )
+//    }  
 
-   sendButton.addEventListener('click',onSubmit)
+// // Más de un usuario:
+// function saveDataStorage(event){
+//     event.preventDefault()
 
-
-
-// Más de un usuario:
-
-
-
-
-
+//     let guardarLista = JSON.parse((localStorage.userList) || [])
+// }
+// function saveDataStorage() {
+//     localStorage.setItem(
+//         'userList', 
+//         JSON.stringify({
+//             userName: userName.value,
+//             userMail: userMail.value,
+//             userMsg: userMsg.value,
+//         })
+//     )
+// }
 
